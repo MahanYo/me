@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ماهان | برنامه‌نویس</title>
+    <meta name="description" content="نمونه کار ماهان، برنامه‌نویس حرفه‌ای از اهواز">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.3/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0b0d17;
+            --bg-secondary: #131626;
+            --bg-card: rgba(19, 22, 38, 0.85);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a6c0;
+            --neon-purple: #b388ff;
+            --neon-cyan: #00e5ff;
+            --neon-pink: #ff4081;
+            --glow-purple: rgba(179, 136, 255, 0.3);
+            --glow-cyan: rgba(0, 229, 255, 0.3);
+            --glow-pink: rgba(255, 64, 129, 0.3);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --font-family: 'Vazirmatn', sans-serif;
+            --transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            --nav-height: 64px;
+            --bottom-nav-height: 65px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f0f2f9;
+            --bg-secondary: #e4e8f2;
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --neon-purple: #7c4dff;
+            --neon-cyan: #00838f;
+            --neon-pink: #c51162;
+            --glow-purple: rgba(124, 77, 255, 0.2);
+            --glow-cyan: rgba(0, 131, 143, 0.2);
+            --glow-pink: rgba(197, 17, 98, 0.2);
+            --border-glass: rgba(0, 0, 0, 0.06);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background var(--transition), color var(--transition);
+            overflow-x: hidden;
+            direction: rtl;
+            padding-bottom: calc(var(--bottom-nav-height) + 24px);
+            padding-top: var(--nav-height);
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
+
+        @keyframes morphingBg {
+            0% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40%/50% 60% 30% 70%; }
+            50% { border-radius: 50% 50% 40% 60%/40% 50% 60% 50%; }
+            75% { border-radius: 70% 30% 50% 50%/40% 60% 50% 50%; }
+            100% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-18px) rotate(2deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px var(--glow-purple); }
+            50% { box-shadow: 0 0 40px var(--glow-purple), 0 0 80px var(--glow-cyan); }
+        }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes borderGlow {
+            0%, 100% { border-color: var(--neon-purple); box-shadow: 0 0 15px var(--glow-purple); }
+            50% { border-color: var(--neon-cyan); box-shadow: 0 0 30px var(--glow-cyan); }
+        }
+
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal-element.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        /* ===== زبان ===== */
+        .lang-en {
+    display: none;
+}
+.lang-fa {
+    display: inline;
+}
+
+[data-lang="en"] .lang-fa {
+    display: none;
+}
+[data-lang="en"] .lang-en {
+    display: inline;
+}
+
+[data-lang="fa"] .lang-en {
+    display: none;
+}
+[data-lang="fa"] .lang-fa {
+    display: inline;
+}
+
+        /* ===== نویگیشن بالا ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 10px 16px;
+            background: rgba(11, 13, 23, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background var(--transition);
+            height: var(--nav-height);
+        }
+        [data-theme="light"] .navbar {
+            background: rgba(240, 242, 249, 0.92);
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+        }
+        .logo-sub {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            -webkit-text-fill-color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle, .lang-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--font-family);
+            min-width: 44px;
+            justify-content: center;
+        }
+        .theme-toggle:hover, .lang-toggle:hover {
+            background: var(--neon-purple);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--glow-purple);
+        }
+        .theme-toggle .icon-sun,
+        .theme-toggle .icon-moon {
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.9rem;
+        }
+        [data-theme="dark"] .theme-toggle .icon-sun {
+            opacity: 0.3;
+            transform: scale(0.5) rotate(-90deg);
+        }
+        [data-theme="dark"] .theme-toggle .icon-moon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        [data-theme="light"] .theme-toggle .icon-sun {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        [data-theme="light"] .theme-toggle .icon-moon {
+            opacity: 0.3;
+            transform: scale(0.5) rotate(90deg);
+        }
+        .lang-toggle .lang-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .lang-toggle i {
+            font-size: 0.8rem;
+        }
+
+        /* ===== هیرو ===== */
+        .hero {
+            min-height: calc(100vh - var(--nav-height));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg-shape {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--glow-purple), transparent 70%);
+            top: 10%;
+            right: -10%;
+            animation: morphingBg 12s infinite ease-in-out;
+            opacity: 0.5;
+            filter: blur(60px);
+            z-index: 0;
+        }
+        .hero-bg-shape2 {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, var(--glow-cyan), transparent 70%);
+            bottom: 10%;
+            left: -5%;
+            animation: morphingBg 15s infinite ease-in-out reverse;
+            opacity: 0.4;
+            filter: blur(50px);
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 700px;
+        }
+        .hero-content .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+            margin: 0 auto 20px;
+            padding: 3px;
+            animation: float 4s ease-in-out infinite, pulseGlow 3s infinite;
+            position: relative;
+        }
+        .hero-content .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--bg-primary);
+            border: 3px solid var(--bg-primary);
+        }
+        .hero-content .avatar .status-dot {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
+            background: #4caf50;
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+            animation: pulseGlow 2s infinite;
+        }
+        .hero-content h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+            background: linear-gradient(135deg, #fff, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        [data-theme="light"] .hero-content h1 {
+            background: linear-gradient(135deg, #1a1a2e, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-content .location {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .hero-content .location i {
+            color: var(--neon-pink);
+        }
+        .hero-content .typing {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 18px;
+            min-height: 1.8rem;
+            font-weight: 300;
+        }
+        .hero-content .typing span {
+            color: var(--neon-pink);
+            font-weight: 600;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 9px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            color: #fff;
+            box-shadow: 0 4px 20px var(--glow-purple);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 40px var(--glow-purple);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--neon-purple);
+            color: var(--text-primary);
+        }
+        .btn-outline:hover {
+            background: var(--neon-purple);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--glow-purple);
+        }
+        .btn-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        /* ===== بخش‌ها ===== */
+        section {
+            padding: 50px 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-bottom: 32px;
+            text-align: center;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+            margin: 8px auto 0;
+            border-radius: 4px;
+            animation: borderGlow 3s infinite;
+        }
+
+        /* ===== درباره من ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+        .about-text p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+        .about-text .highlight {
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+        .about-text .highlight-cyan {
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+        .soft-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .soft-skills span {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .soft-skills span:hover {
+            background: var(--neon-purple);
+            color: #fff;
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px var(--glow-purple);
+        }
+        .soft-skills span i {
+            color: var(--neon-cyan);
+        }
+        .soft-skills span:hover i {
+            color: #fff;
+        }
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            text-align: center;
+        }
+        .about-stats .stat {
+            background: var(--bg-card);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 18px 12px;
+            transition: all 0.4s;
+        }
+        .about-stats .stat:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            border-color: var(--neon-purple);
+        }
+        .about-stats .stat .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--neon-cyan);
+        }
+        .about-stats .stat .label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* ===== مهارت‌ها ===== */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .skill-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+            border-color: var(--neon-purple);
+        }
+        .skill-card .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .skill-card .skill-header i {
+            font-size: 1.6rem;
+            color: var(--neon-purple);
+        }
+        .skill-card .skill-header h3 {
+            font-size: 1rem;
+        }
+        .skill-card .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .skill-card .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+            border-radius: 10px;
+            width: 0;
+            transition: width 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .skill-card .skill-percent {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            margin-top: 4px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== پروژه‌ها ===== */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .project-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 24px;
+            transition: all 0.4s;
+        }
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-color: var(--neon-cyan);
+        }
+        .project-card .project-icon {
+            font-size: 2rem;
+            color: var(--neon-pink);
+            margin-bottom: 10px;
+        }
+        .project-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        .project-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+        .project-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .project-card .tags span {
+            background: var(--bg-secondary);
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .project-card .tags span i {
+            color: var(--neon-purple);
+        }
+
+        /* ===== تایم‌لاین ===== */
+        .timeline {
+            position: relative;
+            padding-right: 32px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 32px;
+            padding-right: 24px;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .timeline-item.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -26px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--neon-purple);
+            border: 3px solid var(--bg-primary);
+            box-shadow: 0 0 20px var(--glow-purple);
+            transition: 0.3s;
+        }
+        .timeline-item:hover::before {
+            background: var(--neon-cyan);
+            box-shadow: 0 0 30px var(--glow-cyan);
+            transform: scale(1.3);
+        }
+        .timeline-item .date {
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+        .timeline-item h4 {
+            font-size: 1rem;
+            margin: 2px 0;
+        }
+        .timeline-item p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ===== فرم تماس ===== */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+        .contact-form:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 40px var(--glow-purple);
+        }
+        .contact-form .form-group {
+            margin-bottom: 16px;
+        }
+        .contact-form label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            transition: 0.3s;
+            outline: none;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 0 4px var(--glow-purple);
+        }
+        .contact-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .contact-form .error-msg {
+            color: var(--neon-pink);
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+        .contact-form .error-msg.show {
+            display: block;
+        }
+        .contact-form .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ===== فوتر ===== */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 30px 16px;
+            text-align: center;
+            border-top: 1px solid var(--border-glass);
+            margin-top: 30px;
+        }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .footer .social-links a {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--text-secondary);
+        }
+        .footer .social-links a:hover {
+            background: var(--neon-purple);
+            color: #fff;
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 30px var(--glow-purple);
+        }
+        .footer .copyright {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .footer .copyright i {
+            color: var(--neon-pink);
+            animation: pulseGlow 1.5s infinite;
+        }
+
+        /* ===== منوی شناور پایین (فقط ناوبری) ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 16px;
+            left: 12px;
+            right: 12px;
+            height: var(--bottom-nav-height);
+            background: rgba(19, 22, 38, 0.92);
+            backdrop-filter: blur(16px);
+            border-radius: 36px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 6px;
+            z-index: 9999;
+            border: 1px solid var(--border-glass);
+            transition: background var(--transition);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        [data-theme="light"] .bottom-nav {
+            background: rgba(240, 242, 249, 0.92);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.6rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            padding: 4px 8px;
+            border-radius: 20px;
+            flex: 1;
+            max-width: 60px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+        .bottom-nav .nav-item i {
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+        .bottom-nav .nav-item span {
+            font-size: 0.5rem;
+            transition: all 0.3s;
+        }
+        .bottom-nav .nav-item:hover {
+            transform: translateY(-4px);
+            color: var(--neon-purple);
+        }
+        .bottom-nav .nav-item:hover i {
+            color: var(--neon-purple);
+            transform: scale(1.1);
+        }
+        .bottom-nav .nav-item.active {
+            color: var(--neon-purple);
+            background: rgba(179, 136, 255, 0.12);
+        }
+        .bottom-nav .nav-item.active i {
+            color: var(--neon-purple);
+            filter: drop-shadow(0 0 8px var(--glow-purple));
+        }
+        .bottom-nav .nav-item.active span {
+            color: var(--neon-purple);
+        }
+        /* حذف دکمه‌های اضافی از منوی پایین */
+        .bottom-nav .nav-item.theme-nav-btn,
+        .bottom-nav .nav-item.lang-nav-btn {
+            display: none !important;
+        }
+
+        /* ===== دکمه بازگشت به بالا ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: calc(var(--bottom-nav-height) + 32px);
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--glow-purple);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scroll-top.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        .scroll-top:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 40px var(--glow-purple);
+        }
+
+        /* ===== رسپانسیو ===== */
+        @media (max-width: 768px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .about-stats { grid-template-columns: repeat(3, 1fr); }
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content .typing { font-size: 1rem; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 1.5rem; }
+            .contact-form { padding: 20px; }
+            .hero-buttons .btn { padding: 8px 18px; font-size: 0.8rem; }
+            .bottom-nav .nav-item i { font-size: 1rem; }
+            .bottom-nav .nav-item span { font-size: 0.45rem; }
+            .bottom-nav { height: 56px; bottom: 12px; left: 10px; right: 10px; border-radius: 30px; }
+            body { padding-bottom: calc(56px + 20px); }
+            .scroll-top { bottom: calc(56px + 28px); right: 12px; width: 36px; height: 36px; font-size: 0.85rem; }
+            .hero-content .avatar { width: 100px; height: 100px; }
+            .hero-content .avatar .status-dot { width: 14px; height: 14px; bottom: 3px; right: 3px; }
+            .navbar { padding: 8px 12px; height: 56px; }
+            .logo { font-size: 1rem; }
+            .logo-sub { font-size: 0.55rem; }
+            .theme-toggle, .lang-toggle { padding: 5px 8px; font-size: 0.7rem; min-width: 36px; }
+            .theme-toggle .icon-sun, .theme-toggle .icon-moon { font-size: 0.75rem; }
+            section { padding: 36px 12px; }
+        }
+        @media (max-width: 400px) {
+            .hero-content h1 { font-size: 1.6rem; }
+            .about-stats { grid-template-columns: 1fr 1fr; }
+            .logo-sub { display: none; }
+            .navbar-left { gap: 4px; }
+            .theme-toggle, .lang-toggle { padding: 4px 6px; font-size: 0.65rem; min-width: 32px; }
+        }
+
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+        }
+        .tilt-3d {
+            transition: transform 0.3s;
+            transform-style: preserve-3d;
+        }
+        .tilt-3d:hover {
+            transform: perspective(800px) rotateX(4deg) rotateY(6deg) scale(1.02);
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--neon-cyan);
+            margin-right: 2px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== نویگیشن بالا ===== -->
+<nav class="navbar" id="navbar">
+    <div class="navbar-left">
+        <div class="logo">ماهان <span class="logo-sub">| برنامه‌نویس</span></div>
+    </div>
+    <div class="navbar-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+            <span class="icon-sun"><i class="fas fa-sun"></i></span>
+            <span class="icon-moon"><i class="fas fa-moon"></i></span>
+        </button>
+        <button class="lang-toggle" id="langToggle" aria-label="تغییر زبان">
+            <i class="fas fa-globe"></i>
+            <span class="lang-label lang-fa">FA</span>
+            <span class="lang-label lang-en">EN</span>
+        </button>
+    </div>
+</nav>
+
+<!-- ===== هیرو ===== -->
+<section class="hero" id="home">
+    <div class="hero-bg-shape"></div>
+    <div class="hero-bg-shape2"></div>
+    <div class="hero-content">
+        <div class="avatar">
+            <img src="https://iili.io/CjJZAga.jpg" alt="ماهان">
+            <span class="status-dot"></span>
+        </div>
+        <h1>ماهان</h1>
+        <div class="location">
+            <i class="fas fa-map-pin"></i>
+            <span class="lang-fa">اهواز، ایران</span>
+            <span class="lang-en">Ahvaz, Iran</span>
+        </div>
+        <div class="typing" id="typingText">
+            <span id="typed"></span><span class="typing-cursor"></span>
+        </div>
+        <div class="hero-buttons">
+            <a href="#contact" class="btn btn-primary btn-glow">
+                <i class="fas fa-paper-plane"></i>
+                <span class="lang-fa">تماس با من</span>
+                <span class="lang-en">Contact Me</span>
+            </a>
+            <a href="https://up.20script.ir/do.php?downf=9cab-Mahan.pdf" class="btn btn-outline" download="Mahan-Resume.pdf">
+    <i class="fas fa-file-pdf"></i>
+    <span class="lang-fa">دانلود رزومه</span>
+    <span class="lang-en">Download CV</span>
+</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== درباره من ===== -->
+<section id="about">
+    <h2 class="section-title reveal-element">
+        <span class="lang-fa">درباره من</span>
+        <span class="lang-en">About Me</span>
+    </h2>
+    <div class="about-grid">
+        <div class="about-text reveal-element delay-1">
+            <p class="lang-fa">
+                من <span class="highlight">ماهان</span> هستم، یک برنامه‌نویس حرفه‌ای اهل <span class="highlight-cyan">اهواز</span> 
+                با <span class="highlight">۴ سال</span> تجربه در حوزه توسعه نرم‌افزار. 
+                عاشق خلق راه‌حل‌های خلاقانه و کارآمد برای چالش‌های دنیای واقعی هستم.
+            </p>
+            <p class="lang-en">
+                I'm <span class="highlight">Mahan</span>, a professional programmer from <span class="highlight-cyan">Ahvaz</span> 
+                with <span class="highlight">4 years</span> of experience in software development. 
+                I love creating creative and efficient solutions for real-world challenges.
+            </p>
+            <p class="lang-fa">
+                تخصص من در طراحی و پیاده‌سازی اپلیکیشن‌های وب مدرن با استفاده از جدیدترین 
+                تکنولوژی‌هاست. همیشه به دنبال یادگیری و به‌کارگیری روش‌های نوین در پروژه‌هایم هستم 
+                تا تجربه‌ای بی‌نظیر برای کاربران خلق کنم.
+            </p>
+            <p class="lang-en">
+                My expertise is in designing and implementing modern web applications using the latest 
+                technologies. I'm always looking to learn and apply new methods in my projects 
+                to create a unique experience for users.
+            </p>
+            <div class="soft-skills">
+                <span><i class="fas fa-users"></i> <span class="lang-fa">کار تیمی</span><span class="lang-en">Teamwork</span></span>
+                <span><i class="fas fa-lightbulb"></i> <span class="lang-fa">حل مسئله</span><span class="lang-en">Problem Solving</span></span>
+                <span><i class="fas fa-comments"></i> <span class="lang-fa">ارتباطات</span><span class="lang-en">Communication</span></span>
+                <span><i class="fas fa-clock"></i> <span class="lang-fa">مدیریت زمان</span><span class="lang-en">Time Management</span></span>
+                <span><i class="fas fa-rocket"></i> <span class="lang-fa">یادگیری سریع</span><span class="lang-en">Fast Learning</span></span>
+            </div>
+        </div>
+        <div class="about-stats reveal-element delay-2">
+            <div class="stat tilt-3d">
+                <div class="number">۴+</div>
+                <div class="label"><span class="lang-fa">سال تجربه</span><span class="lang-en">Years Exp.</span></div>
+            </div>
+            <div class="stat tilt-3d">
+                <div class="number">۱۵+</div>
+                <div class="label"><span class="lang-fa">پروژه موفق</span><span class="lang-en">Projects</span></div>
+            </div>
+            <div class="stat tilt-3d">
+                <div class="number">۱۰+</div>
+                <div class="label"><span class="lang-fa">مشتری راضی</span><span class="lang-en">Happy Clients</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== مهارت‌ها ===== -->
+<section id="skills">
+    <h2 class="section-title reveal-element">
+        <span class="lang-fa">مهارت‌های فنی</span>
+        <span class="lang-en">Technical Skills</span>
+    </h2>
+    <div class="skills-grid" id="skillsGrid">
+        <!-- توسط JS پر می‌شود -->
+    </div>
+</section>
+
+<!-- ===== پروژه‌ها ===== -->
+<section id="projects">
+    <h2 class="section-title reveal-element">
+        <span class="lang-fa">نمونه کارها</span>
+        <span class="lang-en">Portfolio</span>
+    </h2>
+    <div class="projects-grid" id="projectsGrid">
+        <!-- توسط JS پر می‌شود -->
+    </div>
+</section>
+
+<!-- ===== رزومه / تایم‌لاین ===== -->
+<section id="resume">
+    <h2 class="section-title reveal-element">
+        <span class="lang-fa">سوابق کاری و تحصیلی</span>
+        <span class="lang-en">Work & Education</span>
+    </h2>
+    <div class="timeline" id="timelineContainer">
+        <!-- توسط JS پر می‌شود -->
+    </div>
+</section>
+
+<!-- ===== فرم تماس ===== -->
+<section id="contact">
+    <h2 class="section-title reveal-element">
+        <span class="lang-fa">تماس با من</span>
+        <span class="lang-en">Contact Me</span>
+    </h2>
+    <div class="contact-form glass reveal-element delay-1">
+        <form id="contactForm" novalidate action="https://formsubmit.co/m88873668@gmail.com" method="POST">
+            <!-- مخفی کردن ربات -->
+            <input type="text" name="_honey" style="display:none">
+            <!-- عدم تغییر مسیر -->
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> <span class="lang-fa">نام شما</span><span class="lang-en">Your Name</span></label>
+                <input type="text" id="name" name="name" placeholder="نام خود را وارد کنید / Enter your name" required>
+                <div class="error-msg" id="nameError"><span class="lang-fa">لطفاً نام خود را وارد کنید.</span><span class="lang-en">Please enter your name.</span></div>
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> <span class="lang-fa">ایمیل</span><span class="lang-en">Email</span></label>
+                <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+                <div class="error-msg" id="emailError"><span class="lang-fa">لطفاً یک ایمیل معتبر وارد کنید.</span><span class="lang-en">Please enter a valid email.</span></div>
+            </div>
+            <div class="form-group">
+                <label for="message"><i class="fas fa-comment"></i> <span class="lang-fa">پیام شما</span><span class="lang-en">Your Message</span></label>
+                <textarea id="message" name="message" placeholder="پیام خود را بنویسید... / Write your message..." required></textarea>
+                <div class="error-msg" id="msgError"><span class="lang-fa">لطفاً پیام خود را وارد کنید.</span><span class="lang-en">Please enter your message.</span></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-glow" style="width:100%; justify-content:center;">
+                <i class="fas fa-paper-plane"></i>
+                <span class="lang-fa">ارسال پیام</span>
+                <span class="lang-en">Send Message</span>
+            </button>
+        </form>
+        <div id="formSuccess" style="display:none; margin-top:14px; text-align:center; color:var(--neon-cyan); font-weight:600;">
+            <i class="fas fa-check-circle"></i>
+            <span class="lang-fa">پیام شما با موفقیت ارسال شد!</span>
+            <span class="lang-en">Your message was sent successfully!</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== فوتر ===== -->
+<footer class="footer">
+    <div class="social-links">
+        <a href="https://t.me/GrimZone2025" target="_blank" aria-label="تلگرام">
+            <i class="fab fa-telegram"></i>
+        </a>
+        <a href="https://rubika.ir/luxuory" target="_blank" aria-label="روبیکا">
+            <i class="fas fa-comment-dots"></i>
+        </a>
+        <a href="https://x.com/i_mahanX" target="_blank" aria-label="ایکس">
+            <i class="fab fa-x-twitter"></i>
+        </a>
+        <a href="https://www.instagram.com/i.mahan.yosefi" target="_blank" aria-label="اینستاگرام">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </div>
+    <div class="copyright">
+        <p class="lang-fa">ساخته شده با <i class="fas fa-heart"></i> توسط خودم</p>
+        <p class="lang-en">Made with <i class="fas fa-heart"></i> By myself</p>
+    </div>
+</footer>
+
+<!-- ===== منوی شناور پایین ===== -->
+<nav class="bottom-nav" id="bottomNav">
+    <a href="#home" class="nav-item active" data-section="home">
+        <i class="fas fa-home"></i>
+        <span class="lang-fa">خانه</span>
+        <span class="lang-en">Home</span>
+    </a>
+    <a href="#about" class="nav-item" data-section="about">
+        <i class="fas fa-user"></i>
+        <span class="lang-fa">درباره</span>
+        <span class="lang-en">About</span>
+    </a>
+    <a href="#skills" class="nav-item" data-section="skills">
+        <i class="fas fa-code"></i>
+        <span class="lang-fa">مهارت‌ها</span>
+        <span class="lang-en">Skills</span>
+    </a>
+    <a href="#projects" class="nav-item" data-section="projects">
+        <i class="fas fa-project-diagram"></i>
+        <span class="lang-fa">پروژه‌ها</span>
+        <span class="lang-en">Projects</span>
+    </a>
+    <a href="#contact" class="nav-item" data-section="contact">
+        <i class="fas fa-paper-plane"></i>
+        <span class="lang-fa">تماس</span>
+        <span class="lang-en">Contact</span>
+    </a>
+</nav>
+
+<!-- ===== دکمه بازگشت به بالا ===== -->
+<button class="scroll-top" id="scrollTop" aria-label="بازگشت به بالا">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- ===== اسکریپت ===== -->
+<script>
+    (function() {
+        'use strict';
+
+        // ===== داده‌ها =====
+        const skillsData = [
+            { name: 'JavaScript', icon: 'fab fa-js', percent: 92, color: '#f7df1e' },
+            { name: 'Python', icon: 'fab fa-python', percent: 85, color: '#3776ab' },
+            { name: 'React', icon: 'fab fa-react', percent: 88, color: '#61dafb' },
+            { name: 'Node.js', icon: 'fab fa-node-js', percent: 80, color: '#68a063' },
+            { name: 'PHP', icon: 'fab fa-php', percent: 75, color: '#777bb4' },
+            { name: 'Django', icon: 'fas fa-code', percent: 78, color: '#092e20' },
+        ];
+
+        const projectsData = [
+            {
+                title: 'سیستم مدیریت محتوای پیشرفته',
+                titleEn: 'Advanced CMS',
+                desc: 'پلتفرم مدیریت محتوای سفارشی با قابلیت شخصی‌سازی بالا و رابط کاربری مدرن.',
+                descEn: 'Custom CMS platform with high customizability and modern UI.',
+                tags: ['React', 'Django', 'PostgreSQL', 'Redis'],
+                icon: 'fas fa-cubes'
+            },
+            {
+                title: 'اپلیکیشن فروشگاهی هوشمند',
+                titleEn: 'Smart E-commerce',
+                desc: 'فروشگاه آنلاین با سیستم پیشنهاددهنده مبتنی بر هوش مصنوعی و پرداخت یکپارچه.',
+                descEn: 'Online store with AI-based recommendation system and integrated payment.',
+                tags: ['Vue.js', 'Node.js', 'MongoDB', 'AI'],
+                icon: 'fas fa-store-alt'
+            },
+            {
+                title: 'دستیار مدیریت پروژه',
+                titleEn: 'Project Management Assistant',
+                desc: 'ابزار مدیریت پروژه با قابلیت تحلیل داده، گزارش‌گیری و همکاری تیمی.',
+                descEn: 'Project management tool with data analysis, reporting and team collaboration.',
+                tags: ['React', 'Express', 'Socket.io', 'Chart.js'],
+                icon: 'fas fa-tasks'
+            }
+        ];
+
+        const timelineData = [
+            { date: '۱۴۰۵ - اکنون', dateEn: '2023 - Present', title: 'برنامه‌نویس ارشد', titleEn: 'Senior Developer', desc: 'طراحی و پیاده‌سازی سیستم‌های پیچیده با React و Django.', descEn: 'Design and implementation of complex systems with React and Django.' },
+            { date: '۱۴۰۴ - ۱۴۰۵', dateEn: '2022 - 2023', title: 'توسعه‌دهنده فول‌استک', titleEn: 'Full-Stack Developer', desc: 'توسعه اپلیکیشن‌های وب با استفاده از Node.js و Vue.js.', descEn: 'Developing web applications using Node.js and Vue.js.' },
+            { date: '۱۴۰۳ - ۱۴۰۴', dateEn: '2021 - 2022', title: 'برنامه‌نویس بک‌اند', titleEn: 'Backend Developer', desc: 'ساخت APIهای RESTful و مدیریت پایگاه‌های داده با Python.', descEn: 'Building RESTful APIs and database management with Python.' },
+            { date: '۱۴۰۲ - ۱۴۰۳', dateEn: '2020 - 2021', title: 'آموزش برنامه‌نویسی', titleEn: 'Programming Training', desc: 'آموزش تخصصی برنامه‌نویسی و شروع فعالیت حرفه‌ای.', descEn: 'Specialized programming training and starting professional activity.' },
+        ];
+
+        // ===== تایپ‌رایت =====
+        const typedElement = document.getElementById('typed');
+const phrases = [
+    'برنامه‌نویس حرفه‌ای',
+    'توسعه‌دهنده فول‌استک',
+    'عاشق کدنویسی',
+    'سوابق کاری خوب',
+];
+const phrasesEn = [
+    'Professional Programmer',
+    'Full-Stack Developer',
+    'Love Coding',
+    'From Ahvaz',
+];
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typingSpeed = 80;
+
+function getPhrases() {
+    return document.documentElement.getAttribute('data-lang') === 'en' ? phrasesEn : phrases;
+}
+
+function typeEffect() {
+    const currentPhrases = getPhrases();
+    if (phraseIndex >= currentPhrases.length) {
+        phraseIndex = 0;
+    }
+    const currentPhrase = currentPhrases[phraseIndex];
+    
+    if (isDeleting) {
+        // وقتی پاک میکنیم، اول حرف آخر رو بردار
+        if (charIndex > 0) {
+            charIndex--;
+        }
+        typedElement.textContent = currentPhrase.substring(0, charIndex);
+        typingSpeed = 40;
+    } else {
+        // وقتی تایپ میکنیم، حرف بعدی رو اضافه کن
+        if (charIndex < currentPhrase.length) {
+            charIndex++;
+        }
+        typedElement.textContent = currentPhrase.substring(0, charIndex);
+        typingSpeed = 80;
+    }
+
+    // اگه کلمه کامل شد و در حال تایپ بودیم
+    if (!isDeleting && charIndex === currentPhrase.length) {
+        typingSpeed = 2000;
+        isDeleting = true;
+    } 
+    // اگه کلمه کامل پاک شد
+    else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % currentPhrases.length;
+        typingSpeed = 500;
+    }
+
+    setTimeout(typeEffect, typingSpeed);
+}
+typeEffect();
+
+        // ===== رندر مهارت‌ها =====
+        const skillsGrid = document.getElementById('skillsGrid');
+        skillsData.forEach((skill, index) => {
+            const card = document.createElement('div');
+            card.className = `skill-card reveal-element delay-${(index % 4) + 1}`;
+            card.innerHTML = `
+                <div class="skill-header">
+                    <i class="${skill.icon}" style="color:${skill.color};"></i>
+                    <h3>${skill.name}</h3>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" data-percent="${skill.percent}"></div>
+                </div>
+                <div class="skill-percent">${skill.percent}%</div>
+            `;
+            skillsGrid.appendChild(card);
+        });
+
+        // ===== رندر پروژه‌ها =====
+        const projectsGrid = document.getElementById('projectsGrid');
+        projectsData.forEach((proj, index) => {
+            const card = document.createElement('div');
+            card.className = `project-card glass tilt-3d reveal-element delay-${(index % 3) + 1}`;
+            card.innerHTML = `
+                <div class="project-icon"><i class="${proj.icon}"></i></div>
+                <h3><span class="lang-fa">${proj.title}</span><span class="lang-en">${proj.titleEn}</span></h3>
+                <p><span class="lang-fa">${proj.desc}</span><span class="lang-en">${proj.descEn}</span></p>
+                <div class="tags">
+                    ${proj.tags.map(tag => `<span><i class="fas fa-tag"></i> ${tag}</span>`).join('')}
+                </div>
+            `;
+            projectsGrid.appendChild(card);
+        });
+
+        // ===== رندر تایم‌لاین =====
+        const timelineContainer = document.getElementById('timelineContainer');
+        timelineData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = `timeline-item reveal-element delay-${(index % 4) + 1}`;
+            div.innerHTML = `
+                <div class="date"><span class="lang-fa">${item.date}</span><span class="lang-en">${item.dateEn}</span></div>
+                <h4><span class="lang-fa">${item.title}</span><span class="lang-en">${item.titleEn}</span></h4>
+                <p><span class="lang-fa">${item.desc}</span><span class="lang-en">${item.descEn}</span></p>
+            `;
+            timelineContainer.appendChild(div);
+        });
+
+        // ===== انیمیشن پیشرفت مهارت‌ها =====
+        const progressFills = document.querySelectorAll('.progress-fill');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fill = entry.target;
+                    const percent = fill.getAttribute('data-percent');
+                    fill.style.width = percent + '%';
+                }
+            });
+        }, { threshold: 0.3 });
+        progressFills.forEach(fill => skillObserver.observe(fill));
+
+        // ===== انیمیشن آشکارسازی =====
+        const revealElements = document.querySelectorAll('.reveal-element');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== تایم‌لاین آشکارسازی =====
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.2 });
+        timelineItems.forEach(item => timelineObserver.observe(item));
+
+        // ===== فرم تماس =====
+        const contactForm = document.getElementById('contactForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const msgError = document.getElementById('msgError');
+        const formSuccess = document.getElementById('formSuccess');
+
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+
+            if (nameInput.value.trim() === '') {
+                nameError.classList.add('show');
+                isValid = false;
+            } else {
+                nameError.classList.remove('show');
+            }
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value.trim())) {
+                emailError.classList.add('show');
+                isValid = false;
+            } else {
+                emailError.classList.remove('show');
+            }
+
+            if (messageInput.value.trim() === '') {
+                msgError.classList.add('show');
+                isValid = false;
+            } else {
+                msgError.classList.remove('show');
+            }
+
+            if (isValid) {
+                // ارسال به formsubmit.co
+                const formData = new FormData(contactForm);
+                fetch('https://formsubmit.co/m88873668@gmail.com', {
+                    method: 'POST',
+                    body: formData
+                }).then(() => {
+                    formSuccess.style.display = 'block';
+                    contactForm.reset();
+                    setTimeout(() => {
+                        formSuccess.style.display = 'none';
+                    }, 5000);
+                }).catch(() => {
+                    alert('خطا در ارسال پیام. لطفاً دوباره تلاش کنید.');
+                });
+            }
+        });
+
+        // ===== تغییر تم =====
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        themeToggle.addEventListener('click', function() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // ===== تغییر زبان =====
+        const langToggle = document.getElementById('langToggle');
+        const currentLangStored = localStorage.getItem('lang') || 'fa';
+        document.documentElement.setAttribute('data-lang', currentLangStored);
+        if (currentLangStored === 'en') {
+            document.documentElement.dir = 'ltr';
+        } else {
+            document.documentElement.dir = 'rtl';
+        }
+
+        langToggle.addEventListener('click', function() {
+    const current = document.documentElement.getAttribute('data-lang');
+    const newLang = current === 'fa' ? 'en' : 'fa';
+    document.documentElement.setAttribute('data-lang', newLang);
+    localStorage.setItem('lang', newLang);
+    if (newLang === 'en') {
+        document.documentElement.dir = 'ltr';
+    } else {
+        document.documentElement.dir = 'rtl';
+    }
+    // ریست کامل تایپ‌رایت
+    phraseIndex = 0;
+    charIndex = 0;
+    isDeleting = false;
+    typedElement.textContent = '';
+});
+
+        // ===== منوی پایین: تشخیص بخش فعال =====
+        const bottomNavItems = document.querySelectorAll('.bottom-nav .nav-item');
+        const sections = document.querySelectorAll('section[id]');
+
+        function updateActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 150 && rect.bottom >= 100) {
+                    current = section.id;
+                }
+            });
+            bottomNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === current) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNav, { passive: true });
+        window.addEventListener('load', updateActiveNav);
+
+        // ===== اسکرول نرم منوی پایین =====
+        bottomNavItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ===== دکمه بازگشت به بالا =====
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 400) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== هیرو 3D Tilt =====
+        const heroContent = document.querySelector('.hero-content');
+        heroContent.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            this.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+        });
+        heroContent.addEventListener('mouseleave', function() {
+            this.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg)';
+        });
+
+    console.log('🚀 سایت ماهان بارگذاری شد!');
+})();
+</script>
+
+<!-- ===== جلوگیری از کپی (بدون پیام) ===== -->
+<script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i')) {
+            e.preventDefault();
+        }
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
+    });
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+    });
+</script>
+</body>
+</html>
