@@ -1554,5 +1554,52 @@ typeEffect();
         e.preventDefault();
     });
 </script>
+
+<!-- ===== ویبره دستگاه (لرزش گوشی) ===== -->
+<script>
+function vibrateDevice(duration = 30) {
+    if (navigator.vibrate) {
+        navigator.vibrate(duration);
+    }
+}
+
+function addVibrateToButtons() {
+    const buttons = document.querySelectorAll(`
+        .btn,
+        .bottom-nav .nav-item,
+        .player-btn,
+        .song-item .song-actions button,
+        .theme-toggle,
+        .lang-toggle,
+        .menu-toggle,
+        .scroll-top,
+        .faq-question,
+        .bg-dot,
+        .upload-btn,
+        #saveProfileBtn,
+        #commentForm button[type="submit"],
+        #contactForm button[type="submit"],
+        .nav-links a
+    `);
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            vibrateDevice(30);
+        });
+
+        button.addEventListener('touchstart', function(e) {
+            vibrateDevice(20);
+        }, { passive: true });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', addVibrateToButtons);
+
+const observer = new MutationObserver(function() {
+    addVibrateToButtons();
+});
+observer.observe(document.body, { childList: true, subtree: true });
+</script>
+
 </body>
 </html>
